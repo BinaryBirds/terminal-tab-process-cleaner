@@ -1,0 +1,120 @@
+{
+  "name": "terminal-tab-process-cleaner",
+  "displayName": "Terminal Tab Process Cleaner",
+  "description": "Kills tracked terminal child processes when a terminal tab is closed.",
+  "version": "0.0.1",
+  "publisher": "local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.105.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Terminal Tab Process Cleaner",
+      "properties": {
+        "terminalProcessCleaner.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Track terminal child processes and clean them up when a terminal tab is closed."
+        },
+        "terminalProcessCleaner.dryRun": {
+          "type": "boolean",
+          "default": false,
+          "description": "Log processes that would be killed without sending signals."
+        },
+        "terminalProcessCleaner.pollIntervalMs": {
+          "type": "number",
+          "default": 500,
+          "minimum": 100,
+          "maximum": 5000,
+          "description": "How often to refresh each terminal's descendant process list."
+        },
+        "terminalProcessCleaner.gracePeriodMs": {
+          "type": "number",
+          "default": 1500,
+          "minimum": 0,
+          "maximum": 30000,
+          "description": "How long to wait after the first signal before force-killing remaining processes."
+        },
+        "terminalProcessCleaner.killSignal": {
+          "type": "string",
+          "enum": [
+            "SIGTERM",
+            "SIGINT"
+          ],
+          "default": "SIGTERM",
+          "description": "The first signal sent to tracked processes when their terminal tab closes."
+        },
+        "terminalProcessCleaner.forceKillAfterGrace": {
+          "type": "boolean",
+          "default": true,
+          "description": "Send SIGKILL to tracked processes that remain after the grace period."
+        },
+        "terminalProcessCleaner.excludeProcessNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Executable names that should never be killed, for example [\"ssh\", \"tmux\"]."
+        },
+        "terminalProcessCleaner.excludeCommands": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Case-insensitive command-line fragments that should never be killed."
+        },
+        "terminalProcessCleaner.showNotifications": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a notification after processes are cleaned up."
+        },
+        "terminalProcessCleaner.logLevel": {
+          "type": "string",
+          "enum": [
+            "off",
+            "info",
+            "verbose"
+          ],
+          "default": "info",
+          "description": "How much detail to write to the Terminal Process Cleaner output channel."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "terminalProcessCleaner.showTrackedProcesses",
+        "title": "Terminal Process Cleaner: Show Tracked Processes"
+      },
+      {
+        "command": "terminalProcessCleaner.killTrackedProcesses",
+        "title": "Terminal Process Cleaner: Kill Tracked Processes"
+      },
+      {
+        "command": "terminalProcessCleaner.toggleDryRun",
+        "title": "Terminal Process Cleaner: Toggle Dry Run"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc --watch -p ./",
+    "lint": "tsc -p ./ --noEmit",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.105.0",
+    "@vscode/vsce": "^3.6.0",
+    "typescript": "^5.7.0"
+  }
+}
